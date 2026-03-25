@@ -83,8 +83,8 @@ def main():
         train_loss, train_acc = train_one_epoch(model, train_loader, optimizer, criterion, device)
         val_loss, val_acc = validate(model, val_loader, criterion, device)
         
-        print(f"   Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
-        print(f"   Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}%")
+        print(f" Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
+        print(f" Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}%")
 
         if val_acc > best_acc:
             best_acc = val_acc
