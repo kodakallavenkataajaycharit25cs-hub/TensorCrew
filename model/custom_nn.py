@@ -1,59 +1,37 @@
 import torch
 import torch.nn as nn
+from torchvision import models
+from torchvision.models import ResNet50_Weights
 
-class AdaptiveConcatPool2d(nn.Module):
-    def __init__(self, sz=1):
-        super().__init__()
-        self.ap = nn.AdaptiveAvgPool2d(sz)
-        self.mp = nn.AdaptiveMaxPool2d(sz)
+class SkinDiseaseResNet(nn.Module):
+    def __init__(self, num_classes=23, pretrained=True):
+        super(SkinDiseaseResNet, self).__init__()
+        
+        if pretrained:
+            self.model = models.resnet50(weights=ResNet50_Weights.DEFAULT)
+            print("🏥 Loaded Pretrained ResNet-50 Weights!")
+        else:
+            self.model = models.resnet50(weights=None)
+            print("🛠️ Loaded Empty ResNet-50 Architecture.")
 
-    def forward(self, x):
-        return torch.cat([self.mp(x), self.ap(x)], 1)
+        num_ftrs = self.model.fc.in_features
 
-class ResBlock(nn.Module):
-    def __init__(self, in_c, out_c, stride=1):
-        super().__init__()
-        self.conv1 = nn.Conv2d(in_c, out_c, 3, stride=stride, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(out_c)
-        self.conv2 = nn.Conv2d(out_c, out_c, 3, stride=1, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2d(out_c)
-        self.shortcut = nn.Sequential()
-        if stride != 1 or in_c != out_c:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_c, out_c, 1, stride=stride, bias=False),
-                nn.BatchNorm2d(out_c)
-            )
-
-    def forward(self, x):
-        out = torch.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(out))
-        out += self.shortcut(x)
-        return torch.relu(out)
-
-class SkinDiseaseCNN(nn.Module):
-    def __init__(self, num_classes=23):
-        super().__init__()
-        self.features = nn.Sequential(
-            ResBlock(3, 32, 2),
-            ResBlock(32, 64, 2),
-            ResBlock(64, 128, 2),
-            ResBlock(128, 256, 2),
-            AdaptiveConcatPool2d(1)
-        )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(512, 256),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(256, num_classes)
+        self.model.fc = nn.Sequential(
+            nn.Dropout(0.4), 
+            nn.Linear(num_ftrs, num_classes)
         )
 
     def forward(self, x):
-        x = self.features(x)
-        return self.classifier(x)
+        return self.model(x)
 
 if __name__ == "__main__":
-    model = SkinDiseaseCNN(num_classes=23)
-    dummy = torch.randn(1, 3, 224, 224)
-    output = model(dummy)
-    print(f"Output: {output.shape}")
+    # Quick Test
+    model = SkinDiseaseResNet(num_classes=23)
+    dummy_img = torch.randn(1, 3, 224, 224)
+    output = model(dummy_img)
+    print(f"✅ Output Shape: {output.shape} (Should be [1, 23])")
+    
+    total_params = sum(p.numel() for p in model.parameters())
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"✅ Total Params: {total_params:,}")
+    print(f"✅ Trainable Params: {trainable_params:,}")
