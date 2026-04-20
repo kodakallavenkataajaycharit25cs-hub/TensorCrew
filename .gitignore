@@ -16,6 +16,7 @@ __pycache__/
 .idea/
 
 # Large model files
+checkpoints/
 *.pth
 *.h5
 

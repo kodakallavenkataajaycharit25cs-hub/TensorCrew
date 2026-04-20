@@ -11,15 +11,18 @@ IMAGE_SIZE = 224
 BATCH_SIZE = 32
 
 train_transforms = transforms.Compose([
-  transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-  transforms.RandomHorizontalFlip(p= 0.5), # 50% chance
-  transforms.RandomRotation(degrees= 15), # +15/-15 
+  transforms.RandomResizedCrop(IMAGE_SIZE),
+  transforms.RandomHorizontalFlip(),
+  transforms.RandomVerticalFlip(),
+  transforms.RandomRotation(20),
+  transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
   transforms.ToTensor(),
   transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
 val_test_transforms = transforms.Compose([
-  transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+  transforms.Resize(256),
+  transforms.CenterCrop(IMAGE_SIZE),
   transforms.ToTensor(),
   transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
@@ -36,5 +39,5 @@ def get_loaders():
 
 if __name__ == "__main__":
   train_loader, val_loader, test_loader, classes = get_loaders()
-  print(f"Found {len(classes)} classes: {classes[:3]}...")
+  print(f"Found {len(classes)} classes.")
   print(f"Loaded {len(train_loader.dataset)} training images.")

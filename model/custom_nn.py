@@ -9,15 +9,13 @@ class SkinDiseaseResNet(nn.Module):
         
         if pretrained:
             self.model = models.resnet50(weights=ResNet50_Weights.DEFAULT)
-            print("🏥 Loaded Pretrained ResNet-50 Weights!")
         else:
             self.model = models.resnet50(weights=None)
-            print("🛠️ Loaded Empty ResNet-50 Architecture.")
 
         num_ftrs = self.model.fc.in_features
 
         self.model.fc = nn.Sequential(
-            nn.Dropout(0.4), 
+            nn.Dropout(0.5), 
             nn.Linear(num_ftrs, num_classes)
         )
 
@@ -25,13 +23,12 @@ class SkinDiseaseResNet(nn.Module):
         return self.model(x)
 
 if __name__ == "__main__":
-    # Quick Test
     model = SkinDiseaseResNet(num_classes=23)
     dummy_img = torch.randn(1, 3, 224, 224)
     output = model(dummy_img)
-    print(f"✅ Output Shape: {output.shape} (Should be [1, 23])")
+    print(f"Output Shape: {output.shape}")
     
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"✅ Total Params: {total_params:,}")
-    print(f"✅ Trainable Params: {trainable_params:,}")
+    print(f"Total Params: {total_params:,}")
+    print(f"Trainable Params: {trainable_params:,}")

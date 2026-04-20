@@ -1,58 +1,43 @@
 import os
 import shutil
+import random
 from pathlib import Path
-from sklearn.model_selection import train_test_split
-from tqdm import tqdm
 
 CLEANED_DIR = Path("Data/cleaned")
 TRAIN_DIR = Path("Data/train")
 VAL_DIR = Path("Data/val")
 TEST_DIR = Path("Data/test")
 
-all_paths = []
-all_labels = []
-extensions = [".jpg", ".jpeg", ".png"]
-print("--Gathering image paths and labels--")
-
-for img_path in CLEANED_DIR.rglob("*"):
-  if img_path.suffix.lower() in extensions:
-    all_paths.append(img_path)
-    all_labels.append(img_path.parent.name)
-print(f"Found {len(all_paths)} healthy images across {len(set(all_labels))} classes")
-
-train_paths, temp_paths, train_labels, temp_labels = train_test_split(
-  all_paths, all_labels,
-  test_size= 0.3,
-  stratify= all_labels,
-  random_state= 42
-)
-
-val_paths, test_paths, val_labels, test_labels = train_test_split(
-  temp_paths, temp_labels,
-  test_size= 0.5,
-  stratify= temp_labels,
-  random_state= 42
-)
-
-print(f"Training:   {len(train_paths)}")
-print(f"Validation: {len(val_paths)}")
-print(f"Testing:    {len(test_paths)}")
-
-def move_files(paths, dest_base_dir, description):
-  print(f"\n Moving files to {description}...")
-  
-  for path in tqdm(paths, desc= f"Copying to {description}"):
-    class_name = path.parent.name
-    dest_path = dest_base_dir / class_name / path.name
-    dest_path.parent.mkdir(parents=True, exist_ok=True)
+def split_dataset():
+    classes = [d.name for d in CLEANED_DIR.iterdir() if d.is_dir()]
     
-    shutil.copy2(path, dest_path)
+    for d in [TRAIN_DIR, VAL_DIR, TEST_DIR]:
+        if d.exists():
+            shutil.rmtree(d)
+        d.mkdir(parents=True)
 
-move_files(train_paths, TRAIN_DIR, "Training Set")
-move_files(val_paths, VAL_DIR, "Validation Set")
-move_files(test_paths, TEST_DIR, "Test Set")
-print("\n" + "="*50)
-print("SUCCESS! Your dataset is now split 70/15/15.")
-print(f"Train: {TRAIN_DIR}")
-print(f"Val:   {VAL_DIR}")
-print(f"Test:  {TEST_DIR}")
+    for cls in classes:
+        cls_path = CLEANED_DIR / cls
+        images = list(cls_path.glob("*.jpg")) + list(cls_path.glob("*.png")) + list(cls_path.glob("*.jpeg"))
+        random.shuffle(images)
+
+        train_split = int(0.7 * len(images))
+        val_split = int(0.15 * len(images)) + train_split
+
+        train_imgs = images[:train_split]
+        val_imgs = images[train_split:val_split]
+        test_imgs = images[val_split:]
+
+        for imgs, target_dir in zip([train_imgs, val_imgs, test_imgs], [TRAIN_DIR, VAL_DIR, TEST_DIR]):
+            dest = target_dir / cls
+            dest.mkdir(parents=True, exist_ok=True)
+            for img in imgs:
+                shutil.copy(img, dest / img.name)
+
+    print("Dataset split successful.")
+    print(f"Train: {TRAIN_DIR}")
+    print(f"Val:   {VAL_DIR}")
+    print(f"Test:  {TEST_DIR}")
+
+if __name__ == "__main__":
+    split_dataset()

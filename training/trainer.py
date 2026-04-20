@@ -20,7 +20,6 @@ class Trainer:
             os.makedirs(self.save_dir)
 
     def fit(self, epochs, start_epoch=0):
-        print(f"🏥 Training started/resumed from Epoch {start_epoch+1} to {epochs}...")
         for epoch in range(start_epoch, epochs):
             self.model.train()
             running_loss = 0.0
@@ -53,26 +52,20 @@ class Trainer:
             train_acc = 100. * correct / total
             val_loss, val_acc = self.evaluate()
             
-            # --- Logging & Checkpointing ---
-            is_log_epoch = (epoch + 1) % 5 == 0 or epoch == 0 or (epoch + 1) == epochs
+            print(f"Epoch [{epoch+1}/{epochs}]")
+            print(f"   Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
+            print(f"   Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}%")
             
-            if is_log_epoch:
-                print(f"📊 Epoch [{epoch+1}/{epochs}]")
-                print(f"   Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
-                print(f"   Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.2f}%")
-            
-            # 1. Always save if it's the BEST model
             if val_acc > self.best_acc:
                 self.best_acc = val_acc
                 self.save_checkpoint(epoch + 1, val_acc, filename="best_model.pth")
-                if is_log_epoch: print(f"   ⭐ New Best Model Saved! (Acc: {val_acc:.2f}%)")
+                print(f"   New Best Model Saved! (Acc: {val_acc:.2f}%)")
             
-            # 2. Save every 5 epochs unconditionally (for resuming)
             if (epoch + 1) % 5 == 0:
                 self.save_checkpoint(epoch + 1, val_acc, filename=f"checkpoint_epoch_{epoch+1}.pth")
-                print(f"   💾 Periodic Checkpoint Saved: checkpoint_epoch_{epoch+1}.pth")
+                print(f"   Periodic Checkpoint Saved: checkpoint_epoch_{epoch+1}.pth")
 
-            if is_log_epoch: print("-" * 30)
+            print("-" * 30)
             self.scheduler.step(val_loss)
 
     def evaluate(self):
@@ -103,13 +96,11 @@ class Trainer:
         torch.save(state, os.path.join(self.save_dir, filename))
 
     def load_latest_checkpoint(self):
-        """Finds and loads the most recent periodic checkpoint."""
         if not os.path.exists(self.save_dir): return 0
         
         checkpoints = [f for f in os.listdir(self.save_dir) if f.startswith('checkpoint_epoch_')]
         if not checkpoints: return 0
         
-        # Sort by epoch number to get the latest
         checkpoints.sort(key=lambda x: int(x.split('_')[-1].split('.')[0]))
         latest = checkpoints[-1]
         path = os.path.join(self.save_dir, latest)
@@ -120,5 +111,5 @@ class Trainer:
         self.scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
         self.best_acc = checkpoint.get('best_acc', checkpoint['acc'])
         
-        print(f"✅ Resumed from checkpoint: {latest} (Epoch {checkpoint['epoch']}, Prev Acc: {checkpoint['acc']:.2f}%)")
+        print(f"Resumed from checkpoint: {latest} (Epoch {checkpoint['epoch']}, Prev Acc: {checkpoint['acc']:.2f}%)")
         return checkpoint['epoch']
