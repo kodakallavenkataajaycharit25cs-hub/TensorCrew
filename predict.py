@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
-from model.custom_nn import SkinDiseaseResNet
+from model.custom_nn import SkinDiseaseModel
 from dataset.dataset_loader import get_loaders
 import os
 
@@ -12,7 +12,7 @@ def predict(image_path):
     _, _, _, classes = get_loaders()
     num_classes = len(classes)
 
-    model = SkinDiseaseResNet(num_classes=num_classes).to(DEVICE)
+    model = SkinDiseaseModel(num_classes=num_classes).to(DEVICE)
     checkpoint_path = 'checkpoints/best_model.pth'
     
     if not os.path.exists(checkpoint_path):
@@ -39,8 +39,8 @@ def predict(image_path):
         conf, pred = torch.max(prob, 1)
 
     print(f"PREDICTION FOR: {image_path}")
-    print(f"   Disease:    {classes[pred.item()]}")
-    print(f"   Confidence: {100*conf.item():.2f}%")
+    print(f"Disease: {classes[pred.item()]}")
+    print(f"Confidence: {100*conf.item():.2f}%")
 
 if __name__ == "__main__":
     predict('test_image.jpg')

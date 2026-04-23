@@ -59,14 +59,14 @@ class Trainer:
             if val_acc > self.best_acc:
                 self.best_acc = val_acc
                 self.save_checkpoint(epoch + 1, val_acc, filename="best_model.pth")
-                print(f"   New Best Model Saved! (Acc: {val_acc:.2f}%)")
+                print(f"   Best Model Saved: {val_acc:.2f}%")
             
-            if (epoch + 1) % 5 == 0:
+            if (epoch + 1) % 10 == 0:
                 self.save_checkpoint(epoch + 1, val_acc, filename=f"checkpoint_epoch_{epoch+1}.pth")
-                print(f"   Periodic Checkpoint Saved: checkpoint_epoch_{epoch+1}.pth")
+                print(f"   Checkpoint Saved: checkpoint_epoch_{epoch+1}.pth")
 
             print("-" * 30)
-            self.scheduler.step(val_loss)
+            self.scheduler.step()
 
     def evaluate(self):
         self.model.eval()
@@ -111,5 +111,5 @@ class Trainer:
         self.scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
         self.best_acc = checkpoint.get('best_acc', checkpoint['acc'])
         
-        print(f"Resumed from checkpoint: {latest} (Epoch {checkpoint['epoch']}, Prev Acc: {checkpoint['acc']:.2f}%)")
+        print(f"Resumed from: {latest} (Epoch {checkpoint['epoch']}, Acc: {checkpoint['acc']:.2f}%)")
         return checkpoint['epoch']

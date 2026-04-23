@@ -1,21 +1,21 @@
 import torch
 import torch.nn as nn
 from torchvision import models
-from torchvision.models import ResNet50_Weights
+from torchvision.models import EfficientNet_V2_S_Weights
 
-class SkinDiseaseResNet(nn.Module):
+class SkinDiseaseModel(nn.Module):
     def __init__(self, num_classes=23, pretrained=True):
-        super(SkinDiseaseResNet, self).__init__()
+        super(SkinDiseaseModel, self).__init__()
         
         if pretrained:
-            self.model = models.resnet50(weights=ResNet50_Weights.DEFAULT)
+            self.model = models.efficientnet_v2_s(weights=EfficientNet_V2_S_Weights.DEFAULT)
         else:
-            self.model = models.resnet50(weights=None)
+            self.model = models.efficientnet_v2_s(weights=None)
 
-        num_ftrs = self.model.fc.in_features
+        num_ftrs = self.model.classifier[1].in_features
 
-        self.model.fc = nn.Sequential(
-            nn.Dropout(0.5), 
+        self.model.classifier = nn.Sequential(
+            nn.Dropout(p=0.4, inplace=True),
             nn.Linear(num_ftrs, num_classes)
         )
 
@@ -23,7 +23,7 @@ class SkinDiseaseResNet(nn.Module):
         return self.model(x)
 
 if __name__ == "__main__":
-    model = SkinDiseaseResNet(num_classes=23)
+    model = SkinDiseaseModel(num_classes=23)
     dummy_img = torch.randn(1, 3, 224, 224)
     output = model(dummy_img)
     print(f"Output Shape: {output.shape}")
