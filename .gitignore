@@ -15,6 +15,12 @@ __pycache__/
 .vscode/
 .idea/
 
+# Node modules
+node_modules/
+Frontend/node_modules/
+dist/
+.env
+
 # Large model files
 checkpoints/
 *.pth
