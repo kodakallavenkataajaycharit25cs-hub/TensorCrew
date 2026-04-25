@@ -2,6 +2,7 @@
 
 :root {
   --font-size: 16px;
+  --font-heading: 'Palmore', 'Libre Bodoni', 'Fraunces', serif;
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -138,24 +139,28 @@
   }
 
   h1 {
+    font-family: var(--font-heading);
     font-size: var(--text-2xl);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h2 {
+    font-family: var(--font-heading);
     font-size: var(--text-xl);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h3 {
+    font-family: var(--font-heading);
     font-size: var(--text-lg);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h4 {
+    font-family: var(--font-heading);
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;

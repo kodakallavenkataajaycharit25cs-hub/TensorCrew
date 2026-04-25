@@ -232,7 +232,7 @@ export default function App() {
         }}
       >
         <div style={{
-          fontFamily: 'Fraunces, serif',
+          fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
           fontSize: '20px',
           fontWeight: 700,
           color: '#2E1F0E',
@@ -276,7 +276,7 @@ export default function App() {
           </div>
 
           <h1 className="hero-h1" style={{
-            fontFamily: 'Fraunces, serif',
+            fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
             fontSize: '46px',
             fontWeight: 700,
             lineHeight: '1.2',
@@ -411,7 +411,7 @@ export default function App() {
             </div>
 
             <h2 style={{
-              fontFamily: 'Fraunces, serif',
+              fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
               fontSize: '34px',
               fontWeight: 700,
               color: '#2E1F0E',
@@ -502,7 +502,7 @@ export default function App() {
 
                 <div>
                   <h3 style={{
-                    fontFamily: 'Fraunces, serif',
+                    fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
                     fontSize: '17px',
                     fontWeight: 700,
                     color: '#2E1F0E',
@@ -539,7 +539,7 @@ export default function App() {
             </div>
 
             <h2 style={{
-              fontFamily: 'Fraunces, serif',
+              fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
               fontSize: '34px',
               fontWeight: 700,
               color: '#F6F0E0',
@@ -576,7 +576,7 @@ export default function App() {
                     {condition.num}
                   </div>
                   <h3 className="condition-name" style={{
-                    fontFamily: 'Fraunces, serif',
+                    fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
                     fontSize: '17px',
                     fontWeight: 700,
                     color: '#F6F0E0',
@@ -613,7 +613,7 @@ export default function App() {
           </div>
 
           <h2 style={{
-            fontFamily: 'Fraunces, serif',
+            fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
             fontSize: '34px',
             fontWeight: 700,
             color: '#2E1F0E',
@@ -683,7 +683,7 @@ export default function App() {
                 </div>
 
                 <h3 style={{
-                  fontFamily: 'Fraunces, serif',
+                  fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
                   fontSize: '17px',
                   fontWeight: 700,
                   color: '#2E1F0E',
@@ -775,7 +775,7 @@ export default function App() {
 
                   <div>
                     <h3 style={{
-                      fontFamily: 'Fraunces, serif',
+                      fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
                       fontSize: '17px',
                       fontWeight: 700,
                       color: '#2E1F0E',
@@ -812,7 +812,7 @@ export default function App() {
           </div>
 
           <h2 style={{
-            fontFamily: 'Fraunces, serif',
+            fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
             fontSize: '34px',
             fontWeight: 700,
             color: '#2E1F0E',
@@ -854,7 +854,7 @@ export default function App() {
                 backgroundColor: '#EAD9BE'
               }}>
                 <h3 style={{
-                  fontFamily: 'Fraunces, serif',
+                  fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
                   fontSize: '17px',
                   fontWeight: 700,
                   color: '#2E1F0E',
@@ -881,7 +881,7 @@ export default function App() {
         <div className="px-[52px]">
           <ScrollReveal>
             <h2 style={{
-              fontFamily: 'Fraunces, serif',
+              fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
               fontSize: '34px',
               fontWeight: 700,
               color: '#F6F0E0',
@@ -919,7 +919,7 @@ export default function App() {
         <ScrollReveal>
           <div className="px-[52px] grid grid-cols-3 items-center">
             <div style={{
-              fontFamily: 'Fraunces, serif',
+              fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
               fontSize: '18px',
               fontWeight: 700,
               color: '#F6F0E0'

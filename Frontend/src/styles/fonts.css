@@ -1,1 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Libre+Bodoni:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* 
+  Palmore is a commercial font. 
+  To use it, please add the font files to the project and define the @font-face here.
+  Example:
+  @font-face {
+    font-family: 'Palmore';
+    src: url('/fonts/Palmore.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+*/

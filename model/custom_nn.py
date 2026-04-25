@@ -4,7 +4,7 @@ from torchvision import models
 from torchvision.models import EfficientNet_V2_S_Weights
 
 class SkinDiseaseModel(nn.Module):
-    def __init__(self, num_classes=23, pretrained=True):
+    def __init__(self, num_classes=7, pretrained=True):
         super(SkinDiseaseModel, self).__init__()
         
         if pretrained:
@@ -23,7 +23,7 @@ class SkinDiseaseModel(nn.Module):
         return self.model(x)
 
 if __name__ == "__main__":
-    model = SkinDiseaseModel(num_classes=23)
+    model = SkinDiseaseModel(num_classes=7)
     dummy_img = torch.randn(1, 3, 224, 224)
     output = model(dummy_img)
     print(f"Output Shape: {output.shape}")
