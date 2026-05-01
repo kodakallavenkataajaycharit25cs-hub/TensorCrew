@@ -16,7 +16,7 @@ def main():
     if not os.path.exists('checkpoints'):
         os.makedirs('checkpoints')
 
-    train_loader, val_loader, _, classes = get_loaders()
+    train_loader, val_loader, _, classes = get_loaders(batch_size=BATCH_SIZE)
     num_classes = len(classes)
 
     targets = [y for _, y in train_loader.dataset.samples]
@@ -27,7 +27,8 @@ def main():
 
     model = SkinDiseaseModel(num_classes=num_classes, pretrained=True)
     
-    for param in model.model.parameters():
+    # Ensure all parameters are trainable
+    for param in model.parameters():
         param.requires_grad = True
         
     model = model.to(DEVICE)

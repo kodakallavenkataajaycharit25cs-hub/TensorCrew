@@ -27,14 +27,14 @@ val_test_transforms = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-def get_loaders():
+def get_loaders(batch_size=BATCH_SIZE):
     train_dataset = datasets.ImageFolder(TRAIN_DIR, transform=train_transforms)
     val_dataset = datasets.ImageFolder(VAL_DIR, transform=val_test_transforms)
     test_dataset = datasets.ImageFolder(TEST_DIR, transform=val_test_transforms)
     
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
     return train_loader, val_loader, test_loader, train_dataset.classes
 
 if __name__ == "__main__":
