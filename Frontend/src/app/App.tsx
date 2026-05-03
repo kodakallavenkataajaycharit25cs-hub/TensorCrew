@@ -3,11 +3,13 @@ import { ImageWithFallback } from './components/figma/ImageWithFallback';
 import { ScrollReveal } from './components/ScrollReveal';
 import { CountUp } from './components/CountUp';
 import { useEffect, useState } from 'react';
-
-export default function App() {
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router';
+import AnalyzePage from './AnalyzePage';
+function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [navbarScrolled, setNavbarScrolled] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoaded(true);
@@ -28,13 +30,32 @@ export default function App() {
     e.preventDefault();
     const target = document.querySelector(targetId);
     if (target) {
-      const navbarHeight = 80;
+      const navbarHeight = 72;
       const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
 
-      window.scrollTo({
-        top: targetPosition,
-        behavior: 'smooth'
-      });
+      const startPosition = window.scrollY;
+      const distance = targetPosition - startPosition;
+
+      const duration = 502; // ~2% slower than standard ~500ms scroll
+      let start: number | null = null;
+
+      const step = (timestamp: number) => {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const percentage = Math.min(progress / duration, 1);
+
+        const easing = percentage < 0.5
+          ? 2 * percentage * percentage
+          : -1 + (4 - 2 * percentage) * percentage;
+
+        window.scrollTo(0, startPosition + distance * easing);
+
+        if (progress < duration) {
+          window.requestAnimationFrame(step);
+        }
+      };
+
+      window.requestAnimationFrame(step);
     }
   };
 
@@ -111,7 +132,6 @@ export default function App() {
         .hero-h1 { animation: fadeInUp 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 850ms backwards; }
         .hero-body { animation: fadeInUp 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 1000ms backwards; }
         .hero-ctas { animation: fadeInUp 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 1100ms backwards; }
-        .hero-stats { animation: fadeInUp 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 1200ms backwards; }
 
         .float-animation {
           animation: float 5s ease-in-out infinite;
@@ -141,6 +161,16 @@ export default function App() {
         .icon-pulse:hover {
           transform: scale(1.08);
           transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .feature-card {
+          transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .feature-card:hover {
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: 0 12px 30px rgba(139, 94, 60, 0.25);
+          border-color: #8B5E3C !important;
         }
 
         .condition-card {
@@ -222,7 +252,7 @@ export default function App() {
       `}</style>
       {/* Navbar */}
       <nav
-        className={`h-20 px-[52px] flex items-center justify-between sticky top-0 z-50 ${isLoaded ? 'navbar-loaded' : ''}`}
+        className={`h-[72px] px-[52px] flex items-center justify-between sticky top-0 z-50 ${isLoaded ? 'navbar-loaded' : ''}`}
         style={{
           borderBottom: '1px solid #DDD0B0',
           backgroundColor: '#F6F0E0',
@@ -252,13 +282,13 @@ export default function App() {
           <a href="#faq" onClick={(e) => handleNavClick(e, '#faq')} className="nav-link nav-item-5">FAQ</a>
         </div>
 
-        <button className="nav-cta px-6 py-2.5 rounded-full flex items-center gap-2 button-hover" style={{
+        <button onClick={() => navigate('/analyze')} className="nav-cta px-6 py-2.5 rounded-full flex items-center gap-2 button-hover" style={{
           backgroundColor: '#2E1F0E',
           color: '#F6F0E0',
           fontSize: '14px',
           fontWeight: 600
         }}>
-          Try the predictor <ArrowRight size={16} />
+          Analyze now <ArrowRight size={16} />
         </button>
       </nav>
 
@@ -302,7 +332,7 @@ export default function App() {
           </p>
 
           <div className="hero-ctas flex gap-4 mb-12">
-            <button className="px-8 py-3.5 rounded-full button-hover" style={{
+            <button onClick={() => navigate('/analyze')} className="px-8 py-3.5 rounded-full button-hover" style={{
               backgroundColor: '#2E1F0E',
               color: '#F6F0E0',
               fontSize: '14px',
@@ -311,43 +341,19 @@ export default function App() {
               Analyze my skin
             </button>
 
-            <button className="px-8 py-3.5 rounded-full button-hover" style={{
-              border: '2px solid #2E1F0E',
-              color: '#2E1F0E',
-              backgroundColor: 'transparent',
-              fontSize: '14px',
-              fontWeight: 600
-            }}>
+            <a
+              href="#how-it-works"
+              onClick={(e) => handleNavClick(e, '#how-it-works')}
+              className="px-8 py-3.5 rounded-full button-hover inline-block" style={{
+                border: '2px solid #2E1F0E',
+                color: '#2E1F0E',
+                backgroundColor: 'transparent',
+                fontSize: '14px',
+                fontWeight: 600,
+                textDecoration: 'none'
+              }}>
               Learn more
-            </button>
-          </div>
-
-          <div className="hero-stats grid grid-cols-4 gap-6">
-            {[
-              { number: '23', label: 'Conditions' },
-              { number: '<8s', label: 'Analysis time' },
-              { number: 'CNN', label: 'CV model' },
-              { number: 'Free', label: 'Always' }
-            ].map((stat, i) => (
-              <div key={i}>
-                <div style={{
-                  fontSize: '28px',
-                  fontWeight: 700,
-                  color: '#8B5E3C',
-                  marginBottom: '4px'
-                }}>
-                  {stat.number}
-                </div>
-                <div style={{
-                  fontSize: '11px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  color: '#9A7A5A'
-                }}>
-                  {stat.label}
-                </div>
-              </div>
-            ))}
+            </a>
           </div>
         </div>
 
@@ -449,9 +455,9 @@ export default function App() {
             {
               icon: (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect x="4" y="6" width="16" height="12" rx="2" stroke="#F6F0E0" strokeWidth="1.5"/>
-                  <line x1="8" y1="10" x2="16" y2="10" stroke="#F6F0E0" strokeWidth="1.5"/>
-                  <line x1="8" y1="14" x2="13" y2="14" stroke="#F6F0E0" strokeWidth="1.5"/>
+                  <rect x="4" y="6" width="16" height="12" rx="2" stroke="#F6F0E0" strokeWidth="1.5" />
+                  <line x1="8" y1="10" x2="16" y2="10" stroke="#F6F0E0" strokeWidth="1.5" />
+                  <line x1="8" y1="14" x2="13" y2="14" stroke="#F6F0E0" strokeWidth="1.5" />
                 </svg>
               ),
               title: '23 conditions classified',
@@ -460,8 +466,8 @@ export default function App() {
             {
               icon: (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M6 12 L10 16 L18 8" stroke="#F6F0E0" strokeWidth="2" strokeLinecap="round"/>
-                  <circle cx="12" cy="12" r="9" stroke="#F6F0E0" strokeWidth="1.5"/>
+                  <path d="M6 12 L10 16 L18 8" stroke="#F6F0E0" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="12" cy="12" r="9" stroke="#F6F0E0" strokeWidth="1.5" />
                 </svg>
               ),
               title: 'Confidence-ranked results',
@@ -470,9 +476,9 @@ export default function App() {
             {
               icon: (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect x="6" y="4" width="12" height="16" rx="1.5" stroke="#F6F0E0" strokeWidth="1.5"/>
-                  <line x1="9" y1="9" x2="15" y2="9" stroke="#F6F0E0" strokeWidth="1.5"/>
-                  <line x1="9" y1="13" x2="15" y2="13" stroke="#F6F0E0" strokeWidth="1.5"/>
+                  <rect x="6" y="4" width="12" height="16" rx="1.5" stroke="#F6F0E0" strokeWidth="1.5" />
+                  <line x1="9" y1="9" x2="15" y2="9" stroke="#F6F0E0" strokeWidth="1.5" />
+                  <line x1="9" y1="13" x2="15" y2="13" stroke="#F6F0E0" strokeWidth="1.5" />
                 </svg>
               ),
               title: 'Plain-language guidance',
@@ -481,8 +487,8 @@ export default function App() {
             {
               icon: (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect x="7" y="10" width="10" height="9" rx="1.5" stroke="#F6F0E0" strokeWidth="1.5"/>
-                  <path d="M9 10 V8 C9 6.3 10.3 5 12 5 C13.7 5 15 6.3 15 8 V10" stroke="#F6F0E0" strokeWidth="1.5"/>
+                  <rect x="7" y="10" width="10" height="9" rx="1.5" stroke="#F6F0E0" strokeWidth="1.5" />
+                  <path d="M9 10 V8 C9 6.3 10.3 5 12 5 C13.7 5 15 6.3 15 8 V10" stroke="#F6F0E0" strokeWidth="1.5" />
                 </svg>
               ),
               title: 'Privacy-first by design',
@@ -490,7 +496,7 @@ export default function App() {
             }
           ].map((feature, i) => (
             <ScrollReveal key={i} delay={i * 120} direction="right" distance={40}>
-              <div className="p-7 rounded-2xl flex gap-4" style={{
+              <div className="feature-card p-7 rounded-2xl flex gap-4" style={{
                 backgroundColor: '#F6F0E0',
                 border: '1px solid #DDD0B0'
               }}>
@@ -628,9 +634,9 @@ export default function App() {
             {
               icon: (
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <rect x="6" y="8" width="16" height="14" rx="2" stroke="#F6F0E0" strokeWidth="1.8"/>
-                  <circle cx="14" cy="15" r="4" stroke="#F6F0E0" strokeWidth="1.8"/>
-                  <circle cx="19" cy="11" r="1" fill="#F6F0E0"/>
+                  <rect x="6" y="8" width="16" height="14" rx="2" stroke="#F6F0E0" strokeWidth="1.8" />
+                  <circle cx="14" cy="15" r="4" stroke="#F6F0E0" strokeWidth="1.8" />
+                  <circle cx="19" cy="11" r="1" fill="#F6F0E0" />
                 </svg>
               ),
               step: 'Step 01',
@@ -640,9 +646,9 @@ export default function App() {
             {
               icon: (
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <circle cx="14" cy="14" r="8" stroke="#F6F0E0" strokeWidth="1.8"/>
-                  <path d="M10 14 L12 16 L18 10" stroke="#F6F0E0" strokeWidth="2" strokeLinecap="round"/>
-                  <circle cx="14" cy="14" r="2" fill="#F6F0E0" opacity="0.3"/>
+                  <circle cx="14" cy="14" r="8" stroke="#F6F0E0" strokeWidth="1.8" />
+                  <path d="M10 14 L12 16 L18 10" stroke="#F6F0E0" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="14" cy="14" r="2" fill="#F6F0E0" opacity="0.3" />
                 </svg>
               ),
               step: 'Step 02',
@@ -652,9 +658,9 @@ export default function App() {
             {
               icon: (
                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                  <path d="M8 10 L8 22 L20 22 L20 10" stroke="#F6F0E0" strokeWidth="1.8" strokeLinecap="round"/>
-                  <path d="M6 10 L14 6 L22 10" stroke="#F6F0E0" strokeWidth="1.8" strokeLinecap="round"/>
-                  <rect x="11" y="14" width="6" height="8" fill="#F6F0E0" opacity="0.3"/>
+                  <path d="M8 10 L8 22 L20 22 L20 10" stroke="#F6F0E0" strokeWidth="1.8" strokeLinecap="round" />
+                  <path d="M6 10 L14 6 L22 10" stroke="#F6F0E0" strokeWidth="1.8" strokeLinecap="round" />
+                  <rect x="11" y="14" width="6" height="8" fill="#F6F0E0" opacity="0.3" />
                 </svg>
               ),
               step: 'Step 03',
@@ -707,52 +713,30 @@ export default function App() {
 
       {/* Technology Section */}
       <section id="technology" className="py-20" style={{ backgroundColor: '#EAD9BE' }}>
-        <div className="px-[52px] grid grid-cols-2 gap-16">
-          <div className="grid grid-cols-2 gap-5">
-            {[
-              { number: 23, label: 'Conditions', isNumeric: true },
-              { number: 'CNN', label: 'Architecture', isNumeric: false },
-              { number: 'Top-3', label: 'Results', isNumeric: false },
-              { number: 0, label: 'Data stored', isNumeric: true }
-            ].map((metric, i) => (
-              <ScrollReveal key={i} delay={i * 100} distance={24}>
-                <div className="p-8 rounded-2xl" style={{
-                  backgroundColor: '#F6F0E0'
-                }}>
-                  {metric.isNumeric && typeof metric.number === 'number' ? (
-                    <CountUp
-                      end={metric.number}
-                      style={{
-                        fontSize: '36px',
-                        fontWeight: 700,
-                        color: '#8B5E3C',
-                        marginBottom: '8px'
-                      }}
-                    />
-                  ) : (
-                    <div style={{
-                      fontSize: '36px',
-                      fontWeight: 700,
-                      color: '#8B5E3C',
-                      marginBottom: '8px'
-                    }}>
-                      {metric.number}
-                    </div>
-                  )}
-                  <div style={{
-                    fontSize: '11px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    color: '#9A7A5A'
-                  }}>
-                    {metric.label}
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
+        <div className="px-[52px] max-w-6xl mx-auto">
+          <ScrollReveal>
+            <div className="text-center" style={{
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              color: '#9A7A5A',
+              marginBottom: '16px'
+            }}>
+              Under the hood
+            </div>
 
-          <div className="space-y-8">
+            <h2 className="text-center" style={{
+              fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
+              fontSize: '34px',
+              fontWeight: 700,
+              color: '#2E1F0E',
+              marginBottom: '48px'
+            }}>
+              Our Cutting Edge Technology
+            </h2>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-3 gap-6">
             {[
               {
                 title: 'Preprocessing pipeline',
@@ -768,29 +752,36 @@ export default function App() {
               }
             ].map((item, i) => (
               <ScrollReveal key={i} delay={i * 150} distance={32}>
-                <div className="flex gap-4">
-                  <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{
-                    backgroundColor: '#8B5E3C'
-                  }} />
-
-                  <div>
-                    <h3 style={{
-                      fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
-                      fontSize: '17px',
-                      fontWeight: 700,
-                      color: '#2E1F0E',
-                      marginBottom: '8px'
-                    }}>
-                      {item.title}
-                    </h3>
-                    <p style={{
-                      fontSize: '15px',
-                      lineHeight: '1.85',
-                      color: '#6B4F35'
-                    }}>
-                      {item.desc}
-                    </p>
+                <div className="p-8 rounded-2xl h-full flex flex-col" style={{
+                  backgroundColor: '#F6F0E0',
+                  border: '1px solid #DDD0B0',
+                  boxShadow: '0 4px 20px rgba(46,31,14,0.05)'
+                }}>
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center mb-6" style={{
+                    backgroundColor: '#EAD9BE',
+                    color: '#8B5E3C',
+                    fontWeight: 700,
+                    fontSize: '14px'
+                  }}>
+                    0{i + 1}
                   </div>
+
+                  <h3 style={{
+                    fontFamily: 'Palmore, "Libre Bodoni", Fraunces, serif',
+                    fontSize: '20px',
+                    fontWeight: 700,
+                    color: '#2E1F0E',
+                    marginBottom: '12px'
+                  }}>
+                    {item.title}
+                  </h3>
+                  <p className="flex-1" style={{
+                    fontSize: '15px',
+                    lineHeight: '1.7',
+                    color: '#6B4F35'
+                  }}>
+                    {item.desc}
+                  </p>
                 </div>
               </ScrollReveal>
             ))}
@@ -946,5 +937,16 @@ export default function App() {
         </ScrollReveal>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/analyze" element={<AnalyzePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
