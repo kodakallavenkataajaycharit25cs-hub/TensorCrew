@@ -3,12 +3,12 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from pathlib import Path
 
-TRAIN_DIR = Path("Data/ham10000/train")
-VAL_DIR = Path("Data/ham10000/val")
-TEST_DIR = Path("Data/ham10000/test")
+TRAIN_DIR = Path("Data/train")
+VAL_DIR = Path("Data/val")
+TEST_DIR = Path("Data/test")
 
 IMAGE_SIZE = 224
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 
 train_transforms = transforms.Compose([
     transforms.RandomResizedCrop(IMAGE_SIZE),
