@@ -8,8 +8,10 @@ import os
 
 def predict(image_path):
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-    num_classes = 7
+    
+    # HAM10000 Classes in alphabetical order (as ImageFolder sees them)
+    classes = ['akiec', 'bcc', 'bkl', 'df', 'mel', 'nv', 'vasc']
+    num_classes = len(classes)
     model = SkinDiseaseModel(num_classes=num_classes, pretrained=False).to(DEVICE)
     
     # HAM10000 normalization
