@@ -3,7 +3,6 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 from model.custom_nn import SkinDiseaseModel
-from dataset.dataset_loader import get_loaders
 import os
 
 def predict(image_path):
