@@ -33,8 +33,8 @@ def get_loaders():
     test_dataset = datasets.ImageFolder(TEST_DIR, transform=val_test_transforms)
     
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,drop_last=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False,drop_last=True)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False,drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
     return train_loader, val_loader, test_loader, train_dataset.classes
 
 if __name__ == "__main__":
