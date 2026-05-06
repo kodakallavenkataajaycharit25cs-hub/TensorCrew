@@ -8,7 +8,7 @@ from collections import Counter
 import os
 
 def main():
-    EPOCHS = 50
+    EPOCHS = 65
     BATCH_SIZE = 16
     LR = 1e-4
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -32,7 +32,7 @@ def main():
         
     model = model.to(DEVICE)
 
-    criterion = nn.CrossEntropyLoss(weight=class_weights, label_smoothing=0.1)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
     optimizer = optim.AdamW(model.parameters(), lr=LR, weight_decay=1e-3)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)
 
