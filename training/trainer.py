@@ -61,7 +61,7 @@ class Trainer:
                 self.save_checkpoint(epoch + 1, val_acc, filename="best_model.pth")
                 print(f"   Best Model Saved: {val_acc:.2f}%")
             
-            if (epoch + 1) % 10 == 0:
+            if (epoch + 1) % 5 == 0:
                 self.save_checkpoint(epoch + 1, val_acc, filename=f"checkpoint_epoch_{epoch+1}.pth")
                 print(f"   Checkpoint Saved: checkpoint_epoch_{epoch+1}.pth")
 
