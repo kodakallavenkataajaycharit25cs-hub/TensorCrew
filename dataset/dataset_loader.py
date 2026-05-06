@@ -3,9 +3,9 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
 from pathlib import Path
 
-TRAIN_DIR = Path("Data/ham10000/train")
-VAL_DIR = Path("Data/ham10000/val")
-TEST_DIR = Path("Data/ham10000/test")
+TRAIN_DIR = Path("Data/train")
+VAL_DIR = Path("Data/val")
+TEST_DIR = Path("Data/test")
 
 IMAGE_SIZE = 224
 BATCH_SIZE = 32
@@ -32,9 +32,9 @@ def get_loaders():
     val_dataset = datasets.ImageFolder(VAL_DIR, transform=val_test_transforms)
     test_dataset = datasets.ImageFolder(TEST_DIR, transform=val_test_transforms)
     
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False,drop_last=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False,drop_last=True)
     return train_loader, val_loader, test_loader, train_dataset.classes
 
 if __name__ == "__main__":
