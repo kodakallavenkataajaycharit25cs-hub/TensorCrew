@@ -18,7 +18,7 @@ def main():
         os.makedirs('checkpoints')
 
     train_loader, val_loader, _, classes = get_loaders(batch_size=BATCH_SIZE)
-    num_classes = len(classes)
+    num_classes = 7
 
     # Calculate class weights for Sampler and Loss
     targets = [y for _, y in train_loader.dataset.samples]
@@ -38,7 +38,7 @@ def main():
     total_samples = sum(class_count)
     loss_weights = torch.FloatTensor([total_samples / c for c in class_count]).to(DEVICE)
 
-    model = SkinDiseaseModel(num_classes=num_classes)
+    model = SkinDiseaseModel(num_classes=num_classes, pretrained=True)
     model = model.to(DEVICE)
 
     # 3. Use Focal Loss
