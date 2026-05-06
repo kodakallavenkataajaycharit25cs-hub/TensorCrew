@@ -10,6 +10,10 @@ TEST_DIR = Path("Data/test")
 IMAGE_SIZE = 224
 BATCH_SIZE = 16
 
+# HAM10000 normalization constants
+MEAN = [0.763, 0.546, 0.570]
+STD = [0.141, 0.153, 0.169]
+
 train_transforms = transforms.Compose([
     transforms.RandomResizedCrop(IMAGE_SIZE),
     transforms.RandomHorizontalFlip(),
@@ -17,14 +21,14 @@ train_transforms = transforms.Compose([
     transforms.RandomRotation(20),
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    transforms.Normalize(MEAN, STD)
 ])
 
 val_test_transforms = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(IMAGE_SIZE),
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    transforms.Normalize(MEAN, STD)
 ])
 
 def get_loaders(batch_size=BATCH_SIZE):

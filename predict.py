@@ -9,25 +9,18 @@ import os
 def predict(image_path):
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    _, _, _, classes = get_loaders()
-    num_classes = len(classes)
-
-    model = SkinDiseaseModel(num_classes=num_classes).to(DEVICE)
-    checkpoint_path = 'checkpoints/best_model.pth'
+    num_classes = 7
+    model = SkinDiseaseModel(num_classes=num_classes, pretrained=False).to(DEVICE)
     
-    if not os.path.exists(checkpoint_path):
-        print("Error: Model checkpoint not found.")
-        return
-
-    checkpoint = torch.load(checkpoint_path, map_location=DEVICE)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    model.eval()
+    # HAM10000 normalization
+    MEAN = [0.763, 0.546, 0.570]
+    STD = [0.141, 0.153, 0.169]
 
     transform = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transforms.Normalize(MEAN, STD)
     ])
 
     image = Image.open(image_path).convert('RGB')
